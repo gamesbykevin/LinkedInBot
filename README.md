@@ -7,7 +7,7 @@ That is because recruiters have gotten lazy sending the same generic message to 
 
 This is deceiving behavior and you waste your time. Recruiters can be easily replaced and your time is far more valuable than theirs
 
-This robot will filter our the lazy recruiters and schedule interviews with only the best leads including... (not limited to)
+This robot will filter out the lazy recruiters and schedule interviews with only the best leads including... (not limited to)
 
 1. Use natural langauge processing (NLP) to engage in conversation with human recruiters
 2. Interface with Google Calendar to schedule interviews when available
