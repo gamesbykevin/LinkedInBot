@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
 import java.util.Random;
 
 import static com.gamesbykevin.linkedinbot.util.LogFile.displayMessage;
@@ -89,5 +90,27 @@ public class AgentHelper {
 
         //wait a moment afterwards for the content to load
         pause();
+    }
+
+    public static void recycle(List<WebElement> elements) {
+
+        //before recycling make sure not null
+        if (elements != null) {
+
+            for (int index = 0; index < elements.size(); index++) {
+                recycle(elements.get(index));
+            }
+
+            elements.clear();
+            elements = null;
+        }
+    }
+
+    public static void recycle(WebElement element) {
+
+        if (element != null) {
+            element.clear();
+            element = null;
+        }
     }
 }

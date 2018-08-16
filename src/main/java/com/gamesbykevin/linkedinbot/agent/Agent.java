@@ -157,7 +157,7 @@ public class Agent {
     public void viewMessages() {
 
         //open the message box
-        openWebPage(MESSAGE_PAGE, "Open message box");
+        openWebPage(MESSAGE_PAGE, "Opening message box");
 
         //locate elements by anchor tag
         //By className = By.cssSelector(".msg-conversation-listitem.msg-conversations-container__convo-item.msg-conversations-container__pillar.ember-view");
@@ -168,6 +168,11 @@ public class Agent {
 
         //check each of the unread messages
         for (WebElement element : elements) {
+
+            //objects we will use to parse the messages
+            List<WebElement> messages = null;
+            WebElement message = null;
+            List<WebElement> children = null;
 
             try {
 
@@ -181,13 +186,13 @@ public class Agent {
                     pause();
 
                     //obtain all chat messages in the conversation
-                    List<WebElement> messages = getDriver().findElements(By.cssSelector(".msg-s-message-list__event.clearfix"));
+                    messages = getDriver().findElements(By.cssSelector(".msg-s-message-list__event.clearfix"));
 
                     //check the last message and determine who sent it
-                    WebElement message = messages.get(messages.size() - 1);
+                    message = messages.get(messages.size() - 1);
 
                     //obtain all children within this web element
-                    List<WebElement> children = message.findElements(By.xpath(".//*"));
+                    children = message.findElements(By.xpath(".//*"));
 
                     //text of message
                     String text = "";
@@ -213,7 +218,13 @@ public class Agent {
                             //get the message text
                             text = child.getText();
                         }
+
+                        //cleanup objects
+                        AgentHelper.recycle(child);
                     }
+
+                    //cleanup objects
+                    AgentHelper.recycle(children);
 
                     if (authored) {
                         displayMessage("We wrote");
@@ -232,8 +243,20 @@ public class Agent {
                 //not all elements will be found
                 e.printStackTrace();
                 break;
+
+            } finally {
+
+                //cleanup objects
+                AgentHelper.recycle(element);
+                AgentHelper.recycle(elements);
+                AgentHelper.recycle(message);
+                AgentHelper.recycle(messages);
+                AgentHelper.recycle(children);
             }
         }
+
+        //cleanup objects
+        AgentHelper.recycle(elements);
     }
 
     private void sendMessage(String message) {
@@ -247,6 +270,9 @@ public class Agent {
         //wait a moment
         pause();
 
+        //recycle object
+        AgentHelper.recycle(element);
+
         //button that will send message
         //element = getDriver().findElement(By.xpath("//div[@class='msg-form__send-button button-primary-small']"));
 
@@ -256,6 +282,9 @@ public class Agent {
 
         //wait a moment
         pause();
+
+        //recycle object
+        AgentHelper.recycle(element);
     }
 
     private void enterLogin() {
