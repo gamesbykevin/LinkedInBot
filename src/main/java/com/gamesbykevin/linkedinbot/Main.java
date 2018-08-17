@@ -24,7 +24,20 @@ public class Main extends Thread {
             LanguageServiceClient language = LanguageServiceClient.create();
 
             // The text to analyze
-            String[] texts = {"I love you fucking cunt.", "I fucking hate thanos!!! I hope he dies a horrible death!!!!! What an awful useless human being!"};
+            String[] texts = {
+                "You are worthless",
+                "You are worth something",
+                "You are worth nothing",
+                "You are nice",
+                "You are nice!",
+                "You are nice!!!!!",
+                "You are not nice",
+                "You are an asshole",
+                "You are a nice asshole",
+                "I love you fucking cunt.",
+                "I fucking hate thanos!!! I hope he dies a horrible death!!!!! What an awful useless human being!"
+            };
+
             for (String text : texts) {
                 Document doc = Document.newBuilder().setContent(text).setType(Document.Type.PLAIN_TEXT).build();
                 // Detects the sentiment of the text
