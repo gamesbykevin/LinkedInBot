@@ -23,7 +23,7 @@ public class Main extends Thread {
             // Instantiates a client
             LanguageServiceClient language = LanguageServiceClient.create();
 
-            // The text to analyze
+            // The text to analyze sentiment and magnitude
             String[] texts = {
                 "You are worthless",
                 "You are worth something",
@@ -34,8 +34,8 @@ public class Main extends Thread {
                 "You are not nice",
                 "You are an asshole",
                 "You are a nice asshole",
-                "I love you fucking cunt.",
-                "I fucking hate thanos!!! I hope he dies a horrible death!!!!! What an awful useless human being!"
+                "I love you jerk.",
+                "I hate thanos!!! I hope he dies a horrible death!!!!! What an awful useless human being!"
             };
 
             for (String text : texts) {
