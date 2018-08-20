@@ -12,8 +12,8 @@
 
         <dependency>
             <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-language</artifactId>
-            <version>1.39.0</version>
+            <artifactId>google-cloud-dialogflow</artifactId>
+            <version>0.55.1-alpha</version>
         </dependency>
 
         <dependency>

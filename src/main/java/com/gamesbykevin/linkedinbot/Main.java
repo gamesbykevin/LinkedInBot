@@ -2,14 +2,17 @@ package com.gamesbykevin.linkedinbot;
 
 import com.gamesbykevin.linkedinbot.agent.Agent;
 import com.gamesbykevin.linkedinbot.util.LogFile;
-import com.gamesbykevin.linkedinbot.util.Properties;
-import com.google.cloud.language.v1.Document;
-import com.google.cloud.language.v1.LanguageServiceClient;
-import com.google.cloud.language.v1.Sentiment;
+import com.google.cloud.dialogflow.v2.*;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import static com.gamesbykevin.linkedinbot.MainHelper.*;
 import static com.gamesbykevin.linkedinbot.util.LogFile.displayMessage;
-import static com.gamesbykevin.linkedinbot.util.LogFile.recycle;
 
 public class Main extends Thread {
 
@@ -20,33 +23,33 @@ public class Main extends Thread {
 
         try {
 
-            // Instantiates a client
-            LanguageServiceClient language = LanguageServiceClient.create();
+            System.out.println("Hello World! " + new Date());
 
-            // The text to analyze sentiment and magnitude
-            String[] texts = {
-                "You are worthless",
-                "You are worth something",
-                "You are worth nothing",
-                "You are nice",
-                "You are nice!",
-                "You are nice!!!!!",
-                "You are not nice",
-                "You are an asshole",
-                "You are a nice asshole",
-                "I love you jerk.",
-                "I hate thanos!!! I hope he dies a horrible death!!!!! What an awful useless human being!"
-            };
+            ArrayList<String> texts = new ArrayList<>();
+            String projectId = "psyched-garage-213416";
 
-            for (String text : texts) {
-                Document doc = Document.newBuilder().setContent(text).setType(Document.Type.PLAIN_TEXT).build();
-                // Detects the sentiment of the text
-                Sentiment sentiment = language.analyzeSentiment(doc).getDocumentSentiment();
+            //keep same for the same conversation
+            final String sessionId = UUID.randomUUID().toString();
 
-                System.out.printf("Text: \"%s\"%n", text);
-                System.out.printf(
-                        "Sentiment: score = %s, magnitude = %s%n",
-                        sentiment.getScore(), sentiment.getMagnitude());
+            //all conversations are spoken in English
+            final String languageCode = "en-US";
+
+            while (true) {
+
+                System.out.println("Type (\"exit\" to quit): ");
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                String sentence = br.readLine();
+
+                if (sentence != null) {
+
+                    if (sentence.equalsIgnoreCase("exit"))
+                        break;
+
+                    texts.clear();
+                    texts.add(sentence);
+                    detectIntentTexts(projectId, texts, sessionId, languageCode);
+                }
             }
 
         } catch (Exception e) {
@@ -54,7 +57,63 @@ public class Main extends Thread {
         }
     }
 
-    public static void mains(String[] args) {
+    /**
+     * Returns the result of detect intent with texts as inputs.
+     *
+     * Using the same `session_id` between requests allows continuation of the conversation.
+     * @param projectId Project/Agent Id.
+     * @param texts The text intents to be detected based on what a user says.
+     * @param sessionId Identifier of the DetectIntent session.
+     * @param languageCode Language code of the query.
+     */
+    public static void detectIntentTexts(
+            String projectId,
+            List<String> texts,
+            String sessionId,
+            String languageCode) throws Exception {
+
+        // Instantiates a client
+        try (SessionsClient sessionsClient = SessionsClient.create()) {
+
+            // Set the session name using the sessionId (UUID) and projectID (my-project-id)
+            SessionName session = SessionName.of(projectId, sessionId);
+            //System.out.println("Session Path: " + session.toString());
+
+            // Detect intents for each text input
+            for (String text : texts) {
+
+                // Set the text (hello) and language code (en-US) for the query
+                TextInput.Builder textInput = TextInput.newBuilder().setText(text).setLanguageCode(languageCode);
+
+                // Build the query with the TextInput
+                QueryInput queryInput = QueryInput.newBuilder().setText(textInput).build();
+
+                // Performs the detect intent request
+                DetectIntentResponse response = sessionsClient.detectIntent(session, queryInput);
+
+                // Display the query result
+                QueryResult queryResult = response.getQueryResult();
+
+                //System.out.println("====================");
+                //System.out.format("Query Text: '%s'\n", queryResult.getQueryText());
+                //System.out.format("Detected Intent: %s (confidence: %f)\n", queryResult.getIntent().getDisplayName(), queryResult.getIntentDetectionConfidence());
+                System.out.format("Fulfillment Text: '%s'\n", queryResult.getFulfillmentText());
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    public static void main(String[] args) {
 
         try {
 
@@ -74,6 +133,7 @@ public class Main extends Thread {
             recycle();
         }
     }
+    */
 
     public Main() {
         //default constructor
